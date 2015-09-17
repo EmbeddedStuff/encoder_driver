@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <CUnit/Basic.h>
+#include "encoder.h"
+
 /*
  * CUnit Test Suite
  */
