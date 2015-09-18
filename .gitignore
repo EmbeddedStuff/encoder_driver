@@ -3,7 +3,8 @@
 /tests/*/objects
 /tests/*/*
 /*/*.swp
-
+/tests/*/source/*.swp
+/tests/*/include/*.swp
 !/source
 !/include
 !/Makefile

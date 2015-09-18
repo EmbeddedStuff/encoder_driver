@@ -7,7 +7,7 @@ TEST_FILES:= $(notdir $(wildcard ./source/*.c ))
 EXEC_TARGET:=$(shell basename $(CURDIR))
 
 ##FILES THAT NEED TO BE COMPILED
-CFILES:= $(TEST_FILES) 
+CFILES:= $(TEST_FILES) encoder.c
 ##EXISTING LIBNAMES THAT NEED TO BE LINKED lib<name>
 LIBS_TO_LINK:=
 ##PACKAGE CONFIG LIBS
