@@ -124,6 +124,42 @@ void test_func11() {
 	CU_ASSERT( encoder_getPosition(myEncoder) == 1);
 }
 
+void test_func12() {
+	encoder_handle myEncoder =  encoder_new();
+	encoder_postEvent(myEncoder, 1, 1);
+	encoder_postEvent(myEncoder, 1, 0);
+	encoder_postEvent(myEncoder, 1, 1);
+	encoder_postEvent(myEncoder, 1, 0);
+	encoder_postEvent(myEncoder, 0, 0);
+	encoder_postEvent(myEncoder, 1, 0);
+	encoder_postEvent(myEncoder, 0, 0);
+	encoder_postEvent(myEncoder, 0, 1);
+	encoder_postEvent(myEncoder, 0, 0);
+	encoder_postEvent(myEncoder, 0, 1);
+	encoder_postEvent(myEncoder, 1, 1);
+	encoder_postEvent(myEncoder, 0, 1);
+	encoder_postEvent(myEncoder, 1, 1);
+	CU_ASSERT( encoder_getPosition(myEncoder) == 1);
+}
+
+void test_func13() {
+	encoder_handle myEncoder =  encoder_new();
+	encoder_postEvent(myEncoder, 1, 1);
+	encoder_postEvent(myEncoder, 0, 1);
+	encoder_postEvent(myEncoder, 1, 1);
+	encoder_postEvent(myEncoder, 0, 1);
+	encoder_postEvent(myEncoder, 0, 0);
+	encoder_postEvent(myEncoder, 0, 1);
+	encoder_postEvent(myEncoder, 0, 0);
+	encoder_postEvent(myEncoder, 1, 0);
+	encoder_postEvent(myEncoder, 0, 0);
+	encoder_postEvent(myEncoder, 1, 0);
+	encoder_postEvent(myEncoder, 1, 1);
+	encoder_postEvent(myEncoder, 1, 0);
+	encoder_postEvent(myEncoder, 1, 1);
+	CU_ASSERT( encoder_getPosition(myEncoder) == -1);
+}
+
 int main() {
 	CU_TestInfo test_array[] = {
 		{"encoder object creation", test_func1},
@@ -137,6 +173,8 @@ int main() {
 		{"encoder false decrement", test_func9},
 		{"encoder false increment true decrement", test_func10},
 		{"encoder false decrement true increment", test_func11},
+		{"encoder noisy increment", test_func12},
+		{"encoder noisy decrement", test_func13},
 		CU_TEST_INFO_NULL};
 
 	CU_SuiteInfo suite_array[] = {
