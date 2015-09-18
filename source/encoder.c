@@ -14,6 +14,29 @@ typedef struct{
 	int position;
 } encoder_t;
 
+typedef enum{
+	NO_EDGE,
+	POSEDGE_A,
+	POSEDGE_B,
+	NEGEDGE_A,
+	NEGEDGE_B
+}edge_event;
+
+edge_event get_event(encoder_t* pEncoder, int stateA, int stateB){
+	int last_stateA = pEncoder->last_a;
+	int last_stateB = pEncoder->last_b;
+	
+	if((last_stateA == 0) && (stateA == 1))
+		return POSEDGE_A;
+	else if((last_stateA == 1) && (stateA == 0))
+		return NEGEDGE_A;
+	else if((last_stateB == 0) && (stateB == 1))
+		return POSEDGE_B;
+	else if((last_stateB == 1) && (stateB == 0))
+		return NEGEDGE_B;
+	else
+		return NO_EDGE;
+}
 
 encoder_handle encoder_new(void){
 	encoder_t* pEncoder = malloc(sizeof(encoder_t));
@@ -27,27 +50,6 @@ encoder_handle encoder_new(void){
 int encoder_getPosition(encoder_handle eHandle){
 	encoder_t* pEncoder = eHandle;
 	return  pEncoder->position;
-}
-
-typedef enum{
-	NO_EDGE,
-	POSEDGE_A,
-	POSEDGE_B,
-	NEGEDGE_A,
-	NEGEDGE_B
-}edge_event;
-
-edge_event get_event(encoder_t* pEncoder, int stateA, int stateB){
-	if((pEncoder->last_a == 0) && (stateA == 1))
-		return POSEDGE_A;
-	else if((pEncoder->last_a == 1) && (stateA == 0))
-		return NEGEDGE_A;
-	else if((pEncoder->last_b == 0) && (stateB == 1))
-		return POSEDGE_B;
-	else if((pEncoder->last_b == 1) && (stateB == 0))
-		return NEGEDGE_B;
-	else
-		return NO_EDGE;
 }
 
 void encoder_postEvent(encoder_handle eHandle, int stateA, int stateB){
