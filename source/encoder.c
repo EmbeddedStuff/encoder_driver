@@ -12,6 +12,7 @@ typedef struct{
 	int last_b;
 	direction_t direction;
 	int position;
+	void (*onChangeCallback)(encoder_handle);
 } encoder_t;
 
 typedef enum{
@@ -44,12 +45,18 @@ encoder_handle encoder_new(void){
 	pEncoder->direction=DIR_NONE;
 	pEncoder->last_a=1;
 	pEncoder->last_b=1;
+	pEncoder->onChangeCallback = NULL;
 	return pEncoder;
 }
 
 int encoder_getPosition(encoder_handle eHandle){
 	encoder_t* pEncoder = eHandle;
 	return  pEncoder->position;
+}
+
+void encoder_setCallback(encoder_handle eHandle, void (*onChangeCallback)(encoder_handle)){
+	encoder_t* pEncoder = eHandle;
+	pEncoder->onChangeCallback = onChangeCallback;
 }
 
 void encoder_postEvent(encoder_handle eHandle, int stateA, int stateB){
@@ -59,10 +66,16 @@ void encoder_postEvent(encoder_handle eHandle, int stateA, int stateB){
 	
 	if( dir == DIR_NONE){
 		if((stateA == 0) && (stateB == 0)){
-			if(event == NEGEDGE_A)
+			if(event == NEGEDGE_A){
 				dir = DIR_POSITIVE;
-			else if(event == NEGEDGE_B)
+				if(pEncoder->onChangeCallback != NULL) 
+					pEncoder->onChangeCallback(eHandle);
+			}
+			else if(event == NEGEDGE_B){
 				dir = DIR_NEGATIVE;
+				if(pEncoder->onChangeCallback != NULL) 
+					pEncoder->onChangeCallback(eHandle);
+			}
 		}
 	}else if((stateA == 1) && (stateB == 1)){
 		if((event == POSEDGE_A) && (dir == DIR_POSITIVE)){
