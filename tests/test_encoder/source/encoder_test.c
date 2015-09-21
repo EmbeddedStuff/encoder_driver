@@ -170,7 +170,7 @@ void mock_callback(encoder_handle encoder){
 void test_func14() {
 	encoder_handle myEncoder =  encoder_new();
 	callbackWasCalled = 0;
-	encoder_setCallback(myEncoder, mock_callback);
+	encoder_setOnChangeCallback(myEncoder, mock_callback);
 	increase_encoder_by_one(myEncoder);
 	CU_ASSERT( callbackWasCalled == 1 );
 }
@@ -178,9 +178,30 @@ void test_func14() {
 void test_func15() {
 	encoder_handle myEncoder =  encoder_new();
 	callbackWasCalled = 0;
-	encoder_setCallback(myEncoder, mock_callback);
+	encoder_setOnChangeCallback(myEncoder, mock_callback);
 	decrease_encoder_by_one(myEncoder);
 	CU_ASSERT( callbackWasCalled == 1 );
+}
+
+int mock_position = 0;
+void mock2_callback(encoder_handle encoder){
+	mock_position = encoder_getPosition(encoder);
+}
+
+void test_func16() {
+	encoder_handle myEncoder =  encoder_new();
+	mock_position = 0;
+	encoder_setOnChangeCallback(myEncoder, mock2_callback);
+	increase_encoder_by_one(myEncoder);
+	CU_ASSERT( mock_position == 1 );
+}
+
+void test_func17() {
+	encoder_handle myEncoder =  encoder_new();
+	mock_position = 0;
+	encoder_setOnChangeCallback(myEncoder, mock2_callback);
+	decrease_encoder_by_one(myEncoder);
+	CU_ASSERT( mock_position == -1 );
 }
 
 int main() {
@@ -200,6 +221,8 @@ int main() {
 		{"encoder noisy decrement", test_func13},
 		{"that callback is called when increment in generated", test_func14},
 		{"that callback is called when decrement in generated", test_func15},
+		{"that callback is passed the right position when incrementing ", test_func16},
+		{"that callback is passed the right position when decrementing ", test_func17},
 		CU_TEST_INFO_NULL};
 
 	CU_SuiteInfo suite_array[] = {

@@ -26,7 +26,7 @@ typedef enum{
 edge_event get_event(encoder_t* pEncoder, int stateA, int stateB){
 	int last_stateA = pEncoder->last_a;
 	int last_stateB = pEncoder->last_b;
-	
+
 	if((last_stateA == 0) && (stateA == 1))
 		return POSEDGE_A;
 	else if((last_stateA == 1) && (stateA == 0))
@@ -54,7 +54,7 @@ int encoder_getPosition(encoder_handle eHandle){
 	return  pEncoder->position;
 }
 
-void encoder_setCallback(encoder_handle eHandle, void (*onChangeCallback)(encoder_handle)){
+void encoder_setOnChangeCallback(encoder_handle eHandle, void (*onChangeCallback)(encoder_handle)){
 	encoder_t* pEncoder = eHandle;
 	pEncoder->onChangeCallback = onChangeCallback;
 }
@@ -63,32 +63,32 @@ void encoder_postEvent(encoder_handle eHandle, int stateA, int stateB){
 	encoder_t* pEncoder = eHandle;
 	edge_event event = get_event(pEncoder, stateA, stateB);
 	direction_t dir = pEncoder->direction;
-	
+
 	if( dir == DIR_NONE){
 		if((stateA == 0) && (stateB == 0)){
 			if(event == NEGEDGE_A){
 				dir = DIR_POSITIVE;
-				if(pEncoder->onChangeCallback != NULL) 
-					pEncoder->onChangeCallback(eHandle);
 			}
 			else if(event == NEGEDGE_B){
 				dir = DIR_NEGATIVE;
-				if(pEncoder->onChangeCallback != NULL) 
-					pEncoder->onChangeCallback(eHandle);
 			}
 		}
 	}else if((stateA == 1) && (stateB == 1)){
 		if((event == POSEDGE_A) && (dir == DIR_POSITIVE)){
 			pEncoder->position++;
-			dir = DIR_NONE;	
+			dir = DIR_NONE;
+			if(pEncoder->onChangeCallback != NULL)
+					pEncoder->onChangeCallback(eHandle);
 		}else if((event == POSEDGE_B) && (dir == DIR_NEGATIVE)){
 			pEncoder->position--;
 			dir = DIR_NONE;
+			if(pEncoder->onChangeCallback != NULL)
+					pEncoder->onChangeCallback(eHandle);
 		}else if(event != NO_EDGE){
 			dir = DIR_NONE;
 		}
 	}
-	
+
 	pEncoder->direction=dir;
 	pEncoder->last_a=stateA;
 	pEncoder->last_b=stateB;
